@@ -69,4 +69,8 @@ void serial_write(USART_TypeDef *USARTx, const char *buffer, int len);
 // Spin wait until we have a byte.
 char serial_read(USART_TypeDef *USARTx);
 
+// Interrupt Functions
+void SysTick_initialize(void);
+void config_gpio_interrupt(void);
+
 #endif
