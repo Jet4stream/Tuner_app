@@ -9,7 +9,7 @@
 
 #define SAMPLE_RATE 10000  // Sampling rate in Hz
 #define NUM_SAMPLES 2048   // Number of samples
-#define FREQ 440          // Sine wave frequency in Hz
+#define FREQ 4400          // Sine wave frequency in Hz
 
 uint8_t fftFlag = 1;
 arm_rfft_instance_q15 fftHandler; // instance of rfft
@@ -19,36 +19,34 @@ uint32_t bitReverse; // set to 0 to not reverse order of bits
 uint32_t sampleRate = SAMPLE_RATE;
 
 q15_t sample[NUM_SAMPLES];
-q15_t result[NUM_SAMPLES * 2];//[8192];
+q15_t result[NUM_SAMPLES * 2];
 
 
 
 int main() {
     host_serial_init();
     char buffer[100];
-    sprintf(buffer, "Hello World\n");
-    serial_write(USART2, buffer, strlen(buffer));
-    dataLength = NUM_SAMPLES; // set to 8192 arbitrarily 
+    dataLength = NUM_SAMPLES;
     ifftFlag = 0;
     bitReverse = 1;
     arm_rfft_init_q15(&fftHandler, dataLength, ifftFlag, bitReverse);
     float peakVal = 0.0f;
     uint32_t peakHz = 0;
 
-    // signal generator
     float sine_wave[NUM_SAMPLES];
-    
 
     while (1) {
+        // sine wave generator
         for (int i = 0; i < NUM_SAMPLES; i++) {
             sine_wave[i] = sinf(2.0f * PI * FREQ * i / SAMPLE_RATE);
         }
     
-    
+        // input sine wave into the sample 
         for (int i = 0; i < NUM_SAMPLES; i++) {
             sample[i] = (q15_t)(sine_wave[i] * 32767);
         }
 
+        // Flag only set when the sample is new data
         if (fftFlag) {
             peakVal = 0.0f;
             peakHz = 0;
